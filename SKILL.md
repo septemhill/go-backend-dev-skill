@@ -69,6 +69,11 @@ Apply cross-cutting concerns via middleware:
 - See `references/FUNCTION_PARAMETER_DESIGN.md` for examples.
 - **Backward Compatibility**: Design function parameters with backward compatibility in mind. Use patterns like **Functional Options** or wrap multiple parameters into a **Request/Options Struct** to avoid breaking changes when extending functionality.
 
+### Concurrency & Goroutines
+- See `references/GOROUTINE_POOLS.md` for examples.
+- If dynamic generation of a large number of goroutines is required (e.g., in a heavily called handler), you **must** use a goroutine pool for management.
+- Unbounded goroutine creation can lead to memory leaks. See [issue #9869](https://github.com/golang/go/issues/9869).
+
 ### Design Principles
 - See `references/DESIGN_PRINCIPLES.md` for examples.
 - **KISS (Keep It Simple and Stupid)**: Prioritize simplicity over complexity. Avoid over-engineering.
@@ -118,6 +123,7 @@ Apply cross-cutting concerns via middleware:
 10. Apply middleware for cross-cutting concerns
 11. Keep handlers thin - defer to services
 12. Use event-driven or hook patterns for extensibility
+13. Use goroutine pools for high-concurrency dynamic tasks
 
 ### ❌ Never Do:
 1. Put business logic in handlers or main.go
@@ -132,6 +138,7 @@ Apply cross-cutting concerns via middleware:
 10. Hardcode side effects in core business logic
 11. Over-engineer simple solutions
 12. Add unnecessary external dependencies
+13. Create unbounded goroutines in hot paths
 
 ---
 
