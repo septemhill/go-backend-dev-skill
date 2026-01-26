@@ -155,6 +155,67 @@ svc.hooks = hooks
 ```
 
 
+## ✅ Correct: Proxy Pattern for extensibility
+
+```go
+// internal/service/user_service.go
+type UserService interface {
+    CreateUser(ctx context.Context, req models.CreateUserRequest) (*models.User, error)
+}
+
+// Base implementation
+type userService struct {
+    repo repository.UserRepository
+}
+
+func (s *userService) CreateUser(ctx context.Context, req models.CreateUserRequest) (*models.User, error) {
+    return s.repo.Create(ctx, &models.User{
+        ID:    uuid.New(),
+        Email: req.Email,
+    })
+}
+
+// internal/service/proxy/logging_proxy.go
+type userLoggingProxy struct {
+    next   service.UserService
+    logger Logger
+}
+
+func NewUserLoggingProxy(next service.UserService, logger Logger) service.UserService {
+    return &userLoggingProxy{
+        next:   next,
+        logger: logger,
+    }
+}
+
+func (p *userLoggingProxy) CreateUser(ctx context.Context, req models.CreateUserRequest) (*models.User, error) {
+    p.logger.Info("creating user", "email", req.Email)
+    
+    user, err := p.next.CreateUser(ctx, req)
+    
+    if err != nil {
+        p.logger.Error("failed to create user", "error", err)
+    } else {
+        p.logger.Info("user created successfully", "id", user.ID)
+    }
+    
+    return user, err
+}
+
+// main.go - Chain proxies to add behavior
+var svc service.UserService = service.NewUserService(repo)
+
+// Wrap with logging
+svc = proxy.NewUserLoggingProxy(svc, logger)
+
+// Wrap with metrics (another proxy)
+svc = proxy.NewUserMetricsProxy(svc, metrics)
+
+// The handler receives the fully wrapped service
+handler := handler.NewCreateUserHandler(svc)
+```
+
+
 ## ❌ Incorrect: Tightly coupled side effects
 
 ```go
