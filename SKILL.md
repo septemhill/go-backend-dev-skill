@@ -72,7 +72,12 @@ Apply cross-cutting concerns via middleware:
 ### Design Principles
 - See `references/DESIGN_PRINCIPLES.md` for examples.
 - **KISS (Keep It Simple and Stupid)**: Prioritize simplicity over complexity. Avoid over-engineering.
-- **SOLID**: Follow SOLID principles to ensure maintainable and scalable code, but always prioritize KISS.
+- **SOLID**: Follow SOLID principles to ensure maintainable and scalable code, but always prioritize KISS:
+    - **S - Single Responsibility Principle (SRP)**: A class or function should have one, and only one, reason to change.
+    - **O - Open/Closed Principle (OCP)**: Entities should be open for extension, but closed for modification.
+    - **L - Liskov Substitution Principle (LSP)**: Derived types must be completely substitutable for their base types.
+    - **I - Interface Segregation Principle (ISP)**: Clients should not be forced to depend on interfaces they do not use.
+    - **D - Dependency Inversion Principle (DIP)**: Depend on abstractions, not on concretions.
 
 ### Testing & Coverage
 - See `references/TESTING.md` for examples.
