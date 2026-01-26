@@ -95,6 +95,10 @@ Apply cross-cutting concerns via middleware:
 - Use `uuid.UUID` for all resource identifiers.
 - Ensure all JSON-serialized fields have appropriate `json` tags.
 
+### Constructor Error Handling
+- See `references/CONSTRUCTOR_ERROR_HANDLING.md` for examples.
+- If a constructor executes logic that returns an error (e.g., parsing config, opening DB), the constructor **must** return `(*Type, error)` instead of panicking.
+
 ## 5. Extensibility Goal
 - See `references/EXTENSIBILITY.md` for examples.
 - When implementing new features, consider how side effects (notifications, logs, state transitions) can be hooked into the existing flow without tightly coupling the core business logic.
