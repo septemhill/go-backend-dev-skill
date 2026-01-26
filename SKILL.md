@@ -30,10 +30,13 @@ This skill defines the architectural requirements, coding standards, and best pr
 - **Return Structs, Accept Interfaces**: Functions should return concrete types even if they implement an interface. Parameters should be interfaces to reduce coupling.
 
 ### The `Handler` Wrapper
-Every HTTP endpoint should be wrapped using the `Handler[REQ, RESP]` found in `internal/handler/base.go`. This ensures consistent:
-- Request decoding (`HandleRequestFunc`, `DefaultDecoder`)
+- See `references/THE_HANDLER_WRAPPER.md` for examples.
+Every HTTP endpoint should be wrapped using the `Handler[REQ, RESP]`. This ensures consistent:
+- Request decoding (`DecodeFunc`, `DefaultDecoder`)
+- **Pre-handling**: Logic executed before the main handler (e.g., validation)
+- **Post-handling**: Logic executed after the main handler (e.g., logging)
+- Response encoding (`EncodeFunc`, `DefaultEncoder`)
 - Error handling (`DefaultErrorHandler`)
-- Response encoding (`HandleResponseFunc`, `DefaultEncoder`)
 
 ### Dependency Injection
 Dependencies must be injected via constructors:
