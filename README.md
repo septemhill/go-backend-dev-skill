@@ -35,6 +35,13 @@ The `references/` directory contains detailed guides on specific topics.
 *   [Function Parameter Design](references/FUNCTION_PARAMETER_DESIGN.md): Best practices for function signatures and options patterns.
 *   [Testing](references/TESTING.md): Strategies for unit and integration testing.
 
+### ⚠️ Error & Panic Safety
+*   [Constructor Error Handling](references/CONSTRUCTOR_ERROR_HANDLING.md): How constructors should handle errors instead of panicking.
+*   [Must-Prefix Functions](references/MUST_FUNCTIONS.md): Safe usage patterns for Must-functions and panic helpers.
+
+### 🔄 Concurrency
+*   [Goroutine Pools](references/GOROUTINE_POOLS.md): Managing goroutines to avoid memory leaks and unbounded concurrency.
+
 ## For AI Agents
 
 *   **[SKILL.md](SKILL.md)**: This is the primary instruction file for AI agents. It summarizes the critical rules from the references above to ensure the AI generates code that adheres to these standards.

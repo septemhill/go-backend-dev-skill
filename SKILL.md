@@ -100,6 +100,17 @@ Apply cross-cutting concerns via middleware:
 - Use `uuid.UUID` for all resource identifiers.
 - Ensure all JSON-serialized fields have appropriate `json` tags.
 
+### Must-Prefix Functions & Panic Safety
+- See `references/MUST_FUNCTIONS.md` for examples.
+- **Must-prefix functions** (e.g., `template.Must`, `regexp.MustCompile`) and helper functions like `func Must[T any](t T, err error) T` that panic on error **must only be used in safe contexts**:
+  1. **Initialization in `main.go`**: Where immediate failure is acceptable and expected (e.g., loading critical configuration, compiling static regexes)
+  2. **Guaranteed safe inputs**: Where you can manually verify that the input will never cause an error (e.g., hardcoded valid regex patterns, compile-time constants)
+- **Never use** Must-functions with:
+  - User input or external data
+  - Runtime-generated values that could be invalid
+  - Any operation in request handlers, services, or repositories where recovery is possible
+- **Rationale**: Panics in production services cause crashes and service disruption. Proper error handling allows graceful degradation and better observability.
+
 ### Constructor Error Handling
 - See `references/CONSTRUCTOR_ERROR_HANDLING.md` for examples.
 - If a constructor executes logic that returns an error (e.g., parsing config, opening DB), the constructor **must** return `(*Type, error)` instead of panicking.
@@ -124,6 +135,7 @@ Apply cross-cutting concerns via middleware:
 11. Keep handlers thin - defer to services
 12. Use event-driven or hook patterns for extensibility
 13. Use goroutine pools for high-concurrency dynamic tasks
+14. Limit Must-functions to main.go initialization or guaranteed-safe inputs
 
 ### ❌ Never Do:
 1. Put business logic in handlers or main.go
@@ -139,6 +151,7 @@ Apply cross-cutting concerns via middleware:
 11. Over-engineer simple solutions
 12. Add unnecessary external dependencies
 13. Create unbounded goroutines in hot paths
+14. Use Must-prefix functions or panic helpers with user input or in request paths
 
 ---
 
