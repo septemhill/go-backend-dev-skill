@@ -1,6 +1,6 @@
 # Standard Library First Examples
 
-## ✅ Can Do: Standard library solutions
+## ✅ Do: Standard library solutions
 
 ```go
 // Use standard library for HTTP routing
@@ -22,7 +22,7 @@ defer cancel()
 ```
 
 
-## ❌ Can't Do: Unnecessary external dependencies
+## ❌ Do Not: Unnecessary external dependencies
 
 ```go
 // DON'T: Use gin/echo when standard library suffices for simple APIs
