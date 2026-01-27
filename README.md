@@ -22,6 +22,7 @@ The `references/` directory contains detailed guides on specific topics.
 ### 🔌 HTTP & API
 *   [The Handler Wrapper](references/THE_HANDLER_WRAPPER.md): The generic `Handler[REQ, RESP]` pattern for standardized API endpoints.
 *   [Middleware](references/MIDDLEWARE.md): Handling cross-cutting concerns like auth and logging.
+*   [Request Validation](references/VALIDATOR_INTERFACE.md): Patterns for validating request parameters using composable interfaces.
 *   [Context Usage](references/CONTEXT_USAGE.md): Proper propagation of `context.Context`.
 
 ### 💾 Data & Logic
@@ -41,6 +42,7 @@ The `references/` directory contains detailed guides on specific topics.
 
 ### 🔄 Concurrency
 *   [Goroutine Pools](references/GOROUTINE_POOLS.md): Managing goroutines to avoid memory leaks and unbounded concurrency.
+*   [Mutex Locking](references/MUTEX_LOCKING.md): Best practices for minimizing lock contention using fine-grained locking.
 
 ## For AI Agents
 
