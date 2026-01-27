@@ -98,3 +98,62 @@ func main() {
     fmt.Println(result)
 }
 ```
+
+## Handling Infinite Loops in Goroutines
+
+When a goroutine is created to run a background task involving an infinite loop (e.g., polling, processing a stream, or a ticker), you **must** ensure it can be terminated gracefully. Failing to do so results in "goroutine leaks," where the goroutine continues running even after the parent process or request has finished.
+
+### ❌ Bad Practice (Uncancellable Loop)
+
+```go
+func (s *Service) StartBackgroundWorker() {
+    go func() {
+        for {
+            // This loop will run forever until the application crashes or exits.
+            // There is no way to stop it programmatically.
+            s.doWork()
+            time.Sleep(1 * time.Second)
+        }
+    }()
+}
+```
+
+### ✅ Good Practice (Context-Aware Loop)
+
+Always pass a `context.Context` to control the lifecycle of the goroutine.
+
+```go
+func (s *Service) StartBackgroundWorker(ctx context.Context) {
+    go func() {
+        ticker := time.NewTicker(1 * time.Second)
+        defer ticker.Stop()
+
+        for {
+            select {
+            case <-ctx.Done():
+                // Context cancelled (timeout, request finished, or shutdown signal)
+                // Clean up and exit the goroutine
+                log.Println("Stopping background worker:", ctx.Err())
+                return
+            case <-ticker.C:
+                // Perform the work
+                s.doWork(ctx)
+            }
+        }
+    }()
+}
+
+// Usage Example
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    svc := &Service{}
+    
+    svc.StartBackgroundWorker(ctx)
+    
+    // ... run application ...
+    
+    // When shutting down
+    cancel() // This signals the goroutine to stop
+    // Wait for cleanup if necessary
+}
+```
