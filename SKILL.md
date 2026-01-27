@@ -74,6 +74,7 @@ Apply cross-cutting concerns via middleware:
 - If dynamic generation of a large number of goroutines is required (e.g., in a heavily called handler), you **must** use a goroutine pool for management.
 - Unbounded goroutine creation can lead to memory leaks. See [issue #9869](https://github.com/golang/go/issues/9869).
 - When starting a new task using a goroutine, if the task involves an infinite loop, ensure that the goroutine accepts a `context.Context` parameter. This allows the use of `context.Context` to terminate the loop, avoiding memory leaks.
+- **Channel Ownership**: The goroutine that writes to a channel should be the one responsible for closing it. This prevents panic scenarios where a channel is closed while being written to.
 
 ### Design Principles
 - See `references/DESIGN_PRINCIPLES.md` for examples.
@@ -97,6 +98,7 @@ Apply cross-cutting concerns via middleware:
 
 ## 4. Error Handling & Return Values
 - See `references/ERROR_HANDLING.md` for examples.
+- **Handle All Errors**: Ensure all errors are properly handled. Ignoring errors or only checking them without action can lead to silent failures.
 - Return clear, typed errors from services (e.g., `ErrUnauthorized`).
 - Use `uuid.UUID` for all resource identifiers.
 - Ensure all JSON-serialized fields have appropriate `json` tags.
@@ -138,6 +140,8 @@ Apply cross-cutting concerns via middleware:
 13. Use goroutine pools for high-concurrency dynamic tasks
 14. Limit Must-functions to main.go initialization or guaranteed-safe inputs
 15. Ensure infinite loop goroutines are cancellable via context
+16. Handle all errors explicitly; do not ignore them
+17. Close channels from the writer side
 
 ### ❌ Never Do:
 1. Put business logic in handlers or main.go
@@ -155,6 +159,8 @@ Apply cross-cutting concerns via middleware:
 13. Create unbounded goroutines in hot paths
 14. Use Must-prefix functions or panic helpers with user input or in request paths
 15. Run infinite loop goroutines without a cancellation mechanism
+16. Ignore errors or use `_` to suppress them
+17. Close channels from the receiver side
 
 ---
 

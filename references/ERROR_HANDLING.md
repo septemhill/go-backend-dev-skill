@@ -79,7 +79,6 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-
 ## ❌ Incorrect: String errors and missing JSON tags
 
 ```go
@@ -115,5 +114,45 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
         respondError(w, http.StatusInternalServerError, err)
         return
     }
+}
+```
+
+## ✅ Correct: Handling All Errors
+
+Always check and handle errors, even if they seem unlikely.
+
+```go
+func (s *Service) ProcessData(data []byte) error {
+    // Correct: Checking json.Unmarshal error
+    var payload Payload
+    if err := json.Unmarshal(data, &payload); err != nil {
+        return fmt.Errorf("failed to unmarshal payload: %w", err)
+    }
+
+    // Correct: Checking db error
+    if err := s.db.Save(payload); err != nil {
+        return fmt.Errorf("failed to save to db: %w", err)
+    }
+
+    // Correct: explicitly ignoring an error with a comment if it's truly safe
+    // _ = logger.Sync() // Safe to ignore in this specific context
+    
+    return nil
+}
+```
+
+## ❌ Incorrect: Ignoring Errors
+
+```go
+func (s *Service) ProcessData(data []byte) error {
+    var payload Payload
+    // BAD: Ignoring error from Unmarshal. 
+    // If data is invalid, payload will be zero-value, leading to subtle bugs.
+    json.Unmarshal(data, &payload) 
+
+    // BAD: Using _ to suppress error without reason
+    _ = s.db.Save(payload)
+
+    return nil
 }
 ```

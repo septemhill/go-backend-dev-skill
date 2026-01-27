@@ -157,3 +157,61 @@ func main() {
     // Wait for cleanup if necessary
 }
 ```
+
+## Channel Ownership and Closure
+
+To prevent panics (writing to a closed channel) and deadlocks, follow the strict rule: **The goroutine that writes to the channel is responsible for closing it.**
+
+### ✅ Good Practice (Writer Closes)
+
+```go
+func (s *Service) StreamData(ctx context.Context) <-chan Data {
+    ch := make(chan Data)
+
+    go func() {
+        defer close(ch) // Writer closes the channel when done
+
+        for {
+            data, err := s.fetchNext(ctx)
+            if err != nil {
+                return // Exit, defer will close channel
+            }
+            
+            select {
+            case ch <- data:
+                // Data sent
+            case <-ctx.Done():
+                return // Exit, defer will close channel
+            }
+        }
+    }()
+
+    return ch
+}
+
+func Consumer(ch <-chan Data) {
+    // Consumer just ranges over the channel until it's closed by the writer
+    for data := range ch {
+        process(data)
+    }
+}
+```
+
+### ❌ Bad Practice (Receiver Closes or Ambiguous Ownership)
+
+```go
+func (s *Service) BadStream() chan Data {
+    ch := make(chan Data)
+    go func() {
+        // Writer does NOT close channel
+        ch <- Data{}
+    }()
+    return ch
+}
+
+func Consumer(ch chan Data) {
+    data := <-ch
+    process(data)
+    close(ch) // DANGEROUS: If the writer tries to send more, it will panic!
+}
+```
