@@ -83,6 +83,10 @@ Apply cross-cutting concerns via middleware:
 - Unbounded goroutine creation can lead to memory leaks. See [issue #9869](https://github.com/golang/go/issues/9869).
 - When starting a new task using a goroutine, if the task involves an infinite loop, ensure that the goroutine accepts a `context.Context` parameter. This allows the use of `context.Context` to terminate the loop, avoiding memory leaks.
 - **Channel Ownership**: The goroutine that writes to a channel should be the one responsible for closing it. This prevents panic scenarios where a channel is closed while being written to.
+- **Mutex Locking**:
+  - See `references/MUTEX_LOCKING.md` for examples.
+  - Minimize the duration mutex locks are held.
+  - When multiple independent resources require locking, use fine-grained locking (one mutex per resource) to avoid unnecessary blocking. Use the generic `Mutex[T]` pattern to enforce this.
 
 ### Design Principles
 - See `references/DESIGN_PRINCIPLES.md` for examples.
