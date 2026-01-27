@@ -150,6 +150,7 @@ Apply cross-cutting concerns via middleware:
 15. Ensure infinite loop goroutines are cancellable via context
 16. Handle all errors explicitly; do not ignore them
 17. Close channels from the writer side
+18. Use composable Validator interface for request validation
 
 ### ❌ Never Do:
 1. Put business logic in handlers or main.go

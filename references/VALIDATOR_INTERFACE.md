@@ -41,6 +41,78 @@ func (v *AllPassValidator) Validate(ctx context.Context, validators ...Validator
 }
 ```
 
+### Validator Implementation
+
+```go
+package validator
+
+import (
+	"context"
+	"fmt"
+	"regexp"
+)
+
+type StringValidator struct {
+	value string
+	min   int
+	max   int
+}
+
+func NewStringValidator(value string, min, max int) *StringValidator {
+	return &StringValidator{
+		value: value,
+		min:   min,
+		max:   max,
+	}
+}
+
+func (v *StringValidator) Validate(ctx context.Context, validators ...Validator) error {
+	if len(v.value) < v.min || len(v.value) > v.max {
+		return fmt.Errorf("string length must be between %d and %d", v.min, v.max)
+	}
+	return nil
+}
+
+type NumberValidator struct {
+	value int
+	min   int
+	max   int
+}
+
+func NewNumberValidator(value, min, max int) *NumberValidator {
+	return &NumberValidator{
+		value: value,
+		min:   min,
+		max:   max,
+	}
+}
+
+func (v *NumberValidator) Validate(ctx context.Context, validators ...Validator) error {
+	if v.value < v.min || v.value > v.max {
+		return fmt.Errorf("number must be between %d and %d", v.min, v.max)
+	}
+	return nil
+}
+
+type EmailValidator struct {
+	value string
+}
+
+func NewEmailValidator(value string) *EmailValidator {
+	return &EmailValidator{
+		value: value,
+		re:    regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`),
+	}
+}
+
+func (v *EmailValidator) Validate(ctx context.Context, validators ...Validator) error {
+	if !v.re.MatchString(v.value) {
+		return fmt.Errorf("invalid email format")
+	}
+	return nil
+}
+```
+
 ### Service Usage (`service.go`)
 
 Inject the root validator into the service.
