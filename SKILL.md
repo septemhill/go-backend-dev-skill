@@ -26,8 +26,16 @@ This skill defines the architectural requirements, coding standards, and best pr
 - **Handlers** must NOT contain business logic. They decode requests, call services, and encode responses.
 - **Services** are the source of truth for business rules. They must be agnostic to the delivery method (HTTP).
 - **Repositories** bridge the domain models and the database.
-- **Interface Design**: Keep interfaces small with minimal methods to provide maximum flexibility for implementers.
+
+### Interface Design
+- Keep interfaces small with minimal methods to provide maximum flexibility for implementers.
 - **Return Structs, Accept Interfaces**: Functions should return concrete types even if they implement an interface. Parameters should be interfaces to reduce coupling.
+
+### Request Validation
+- See `references/VALIDATOR_INTERFACE.md` for examples.
+- When request parameters require validation, implement a `Validator` interface pattern.
+- Use a composable approach (e.g., `AllPassValidator`) to combine multiple validation rules.
+- Inject the validator into the service to keep validation logic decoupled from business logic.
 
 ### The `Handler` Wrapper
 - See `references/THE_HANDLER_WRAPPER.md` for examples.
