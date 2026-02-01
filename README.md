@@ -6,6 +6,7 @@ This repository defines the architectural standards, coding patterns, and best p
 
 *   **Standard Library First**: Minimize external dependencies. Use the robust Go standard library whenever possible.
 *   **Layered Architecture**: Strict separation of concerns between Transports (HTTP), Business Logic (Service), and Data Access (Repository).
+*   **Interface Design**: Return structs, accept interfaces. This provides maximum flexibility for consumers while keeping implementations concrete.
 *   **Type Safety**: Leverage Go's type system to enforce contracts, especially at the API boundaries using the `Handler` wrapper.
 *   **Simplicity (KISS)**: Prioritize readable, simple code over complex abstractions.
 
@@ -34,6 +35,7 @@ The `references/` directory contains detailed guides on specific topics.
 *   [Design Principles](references/DESIGN_PRINCIPLES.md): SOLID, KISS, and other guiding principles.
 *   [Standard Library First](references/STANDARD_LIBRARY_FIRST.md): Guidelines on avoiding unnecessary libraries.
 *   [Function Parameter Design](references/FUNCTION_PARAMETER_DESIGN.md): Best practices for function signatures and options patterns.
+*   [Parameter Mutation](references/AVOID_MUTATING_PARAMETERS.md): Why and how to avoid modifying input parameters.
 *   [Testing](references/TESTING.md): Strategies for unit and integration testing.
 
 ### ⚠️ Error & Panic Safety
@@ -43,6 +45,9 @@ The `references/` directory contains detailed guides on specific topics.
 ### 🔄 Concurrency
 *   [Goroutine Pools](references/GOROUTINE_POOLS.md): Managing goroutines to avoid memory leaks and unbounded concurrency.
 *   [Mutex Locking](references/MUTEX_LOCKING.md): Best practices for minimizing lock contention using fine-grained locking.
+
+### 🚀 Performance
+*   [Performance Optimization](references/PERFORMANCE_OPTIMIZATION.md): Techniques for object pooling and stack allocation.
 
 ## For AI Agents
 
