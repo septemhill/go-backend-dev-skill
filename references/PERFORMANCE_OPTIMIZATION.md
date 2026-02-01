@@ -53,6 +53,33 @@ func NewUser(name string) User {
 > [!NOTE]
 > Reference: [allocation_test.go](file:///Users/septemlee/.gemini/skills/golang-backend/benchmarks/allocation_test.go)
 
+## 3. In-place Mutation vs. Copying (Hot Paths Only)
+
+While `SKILL.md` generally forbids mutating input parameters for predictability, in **extreme hot paths**, in-place mutation can be used to avoid the overhead of copying or allocating new structs.
+
+### ❌ Standard: Copy and Return
+
+```go
+func UpdateOrder(o Order, price float64) Order {
+    // Operates on a copy
+    return Order {
+        Price: price,
+        ...
+    }
+}
+```
+
+### ✅ Performance Optimized: In-place Mutation
+
+```go
+func UpdateOrderInside(o *Order, price float64) {
+    o.Price = price // Direct modification, no allocation
+}
+```
+
+> [!NOTE]
+> Reference: [mutation_test.go](file:///Users/septemlee/.gemini/skills/golang-backend/benchmarks/mutation_test.go)
+
 ### Rationale: Stack vs Heap
 - **Stack**: Automatically cleaned up when the function returns. Extremely fast.
 - **Heap**: Requires the GC to track and clean up. Adds latency and CPU overhead.
@@ -69,6 +96,6 @@ func NewUser(name string) User {
 
 Detailed performance comparisons can be found in the `benchmarks/` directory:
 
-- **Object Pooling**: [pool_test.go](file:///Users/septemlee/.gemini/skills/golang-backend/benchmarks/pool_test.go)
-- **Allocation Strategies**: [allocation_test.go](file:///Users/septemlee/.gemini/skills/golang-backend/benchmarks/allocation_test.go)
-- **Mutation Patterns**: [mutation_test.go](file:///Users/septemlee/.gemini/skills/golang-backend/benchmarks/mutation_test.go)
+- **Object Pooling**: [pool_test.go](../benchmarks/pool_test.go) - Compares `sync.Pool` vs. frequent heap allocations.
+- **Allocation Strategies**: [allocation_test.go](../benchmarks/allocation_test.go) - Compares Return-by-Pointer (Heap) vs. Return-by-Value (Stack).
+- **Mutation Patterns**: [mutation_test.go](../benchmarks/mutation_test.go) - Compares In-place Mutation vs. Copy-and-Return.
