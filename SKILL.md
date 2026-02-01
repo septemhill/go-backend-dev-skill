@@ -76,6 +76,10 @@ Apply cross-cutting concerns via middleware:
 ### Function Parameter Design
 - See `references/FUNCTION_PARAMETER_DESIGN.md` for examples.
 - **Backward Compatibility**: Design function parameters with backward compatibility in mind. Use patterns like **Functional Options** or wrap multiple parameters into a **Request/Options Struct** to avoid breaking changes when extending functionality.
+- **Avoid Parameter Mutation**:
+  - See `references/AVOID_MUTATING_PARAMETERS.md` for examples.
+  - Avoid modifying input parameters within a function, even if they are pointer types. This reduces side effects and makes call-site behavior more predictable.
+  - **Exception**: Mutation is only permissible when justified by severe performance requirements (e.g., high-frequency hot paths, extremely large structs).
 
 ### Concurrency & Goroutines
 - See `references/GOROUTINE_POOLS.md` for examples.
@@ -112,7 +116,6 @@ Apply cross-cutting concerns via middleware:
 - See `references/ERROR_HANDLING.md` for examples.
 - **Handle All Errors**: Ensure all errors are properly handled. Ignoring errors or only checking them without action can lead to silent failures.
 - Return clear, typed errors from services (e.g., `ErrUnauthorized`).
-- Use `uuid.UUID` for all resource identifiers.
 - Ensure all JSON-serialized fields have appropriate `json` tags.
 
 ### Must-Prefix Functions & Panic Safety
@@ -146,15 +149,16 @@ Apply cross-cutting concerns via middleware:
 7. Add proper `json` tags to all models
 8. Write tests with mockery-generated mocks
 9. Use functional options or request structs for extensibility
-10. Apply middleware for cross-cutting concerns
-11. Keep handlers thin - defer to services
-12. Use event-driven or hook patterns for extensibility
-13. Use goroutine pools for high-concurrency dynamic tasks
-14. Limit Must-functions to main.go initialization or guaranteed-safe inputs
-15. Ensure infinite loop goroutines are cancellable via context
-16. Handle all errors explicitly; do not ignore them
-17. Close channels from the writer side
-18. Use composable Validator interface for request validation
+10. Avoid parameter mutation (unless strictly required for performance)
+11. Apply middleware for cross-cutting concerns
+12. Keep handlers thin - defer to services
+13. Use event-driven or hook patterns for extensibility
+14. Use goroutine pools for high-concurrency dynamic tasks
+15. Limit Must-functions to main.go initialization or guaranteed-safe inputs
+16. Ensure infinite loop goroutines are cancellable via context
+17. Handle all errors explicitly; do not ignore them
+18. Close channels from the writer side
+19. Use composable Validator interface for request validation
 
 ### ❌ Never Do:
 1. Put business logic in handlers or main.go
@@ -166,14 +170,15 @@ Apply cross-cutting concerns via middleware:
 7. Expose sensitive fields (like passwords) in JSON
 8. Write untestable code with tight coupling
 9. Add too many positional parameters
-10. Hardcode side effects in core business logic
-11. Over-engineer simple solutions
-12. Add unnecessary external dependencies
-13. Create unbounded goroutines in hot paths
-14. Use Must-prefix functions or panic helpers with user input or in request paths
-15. Run infinite loop goroutines without a cancellation mechanism
-16. Ignore errors or use `_` to suppress them
-17. Close channels from the receiver side
+10. Mutate input parameters (pointers) within functions without performance justification
+11. Hardcode side effects in core business logic
+12. Over-engineer simple solutions
+13. Add unnecessary external dependencies
+14. Create unbounded goroutines in hot paths
+15. Use Must-prefix functions or panic helpers with user input or in request paths
+16. Run infinite loop goroutines without a cancellation mechanism
+17. Ignore errors or use `_` to suppress them
+18. Close channels from the receiver side
 
 ---
 
