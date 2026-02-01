@@ -137,6 +137,12 @@ Apply cross-cutting concerns via middleware:
 - See `references/EXTENSIBILITY.md` for examples.
 - When implementing new features, consider how side effects (notifications, logs, state transitions) can be hooked into the existing flow without tightly coupling the core business logic.
 
+## 6. Performance Optimization
+- See `references/PERFORMANCE_OPTIMIZATION.md` for examples.
+- **Object Pooling**: For objects that are frequently allocated and deallocated, use `sync.Pool` to reduce GC pressure.
+- **Stack Allocation**: Prefer returning concrete objects (values) rather than pointers when the object is small or where stack allocation is possible, reducing the burden on the heap and GC.
+- **Hot Paths**: Only apply aggressive optimizations in verified hot paths where performance issues are significant.
+
 ## Summary of Key Patterns
 
 ### ✅ Always Do:
